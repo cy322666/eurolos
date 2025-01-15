@@ -5,7 +5,7 @@ services:
         build: ./docker/images/php81
         volumes:
             - ./application:/var/www/html
-            - ./docker/images/cron/files:/var/spool/cron/crontabs/
+#            - ./docker/images/cron/files:/var/spool/cron/crontabs/
         ports:
             - "8085:8000"
         links:
