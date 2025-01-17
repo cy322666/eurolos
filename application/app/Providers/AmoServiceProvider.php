@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Facades\amoCRM\AmoCrmManager;
+use App\Facades\amoCRM\amoCRMManager;
 use App\Models\Account;
 use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Client\Token\AccessToken;
