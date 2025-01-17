@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Amo\AuthController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HookController;
 use Illuminate\Support\Facades\Route;
 
