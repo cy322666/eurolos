@@ -9,7 +9,7 @@ use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use AmoCRM\Filters\ContactsFilter;
 use AmoCRM\Filters\EventsFilter;
 use AmoCRM\Models\EventModel;
-use App\Facades\amoCRM;
+use App\Facades\amoCRM\amoCRM;
 use App\Models\Account;
 use App\Models\Entities\Call;
 use Carbon\Carbon;
