@@ -90,7 +90,7 @@ class GetLeadStatuses extends Command
                 try {
                     LeadStatus::query()->create([
                         'event_id' => $event->id,
-                        'status_id' => $event->getValueBefore()[0]['lead_status']['id'],
+                        'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
                         'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
                         'entity_id' => $event->getEntityId(),
                         'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
