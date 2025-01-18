@@ -15,6 +15,8 @@ class Kernel extends ConsoleKernel
          $schedule->command('app:get-entities')->dailyAt('07:00');
          $schedule->command('app:get-lead-create')->hourly();
          $schedule->command('app:get-calls')->hourly();
+
+         $schedule->command('telescope:prune --hours=72')->daily();
     }
 
     /**
