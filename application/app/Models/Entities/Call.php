@@ -19,5 +19,8 @@ class Call extends Model
         'created_by',
         'call_created_at',
         'call_created_timestamp',
+        'responsible_contact',
+        'responsible_lead',
+        'status_id',
     ];
 }

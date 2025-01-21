@@ -14,5 +14,9 @@ class LeadCreate extends Model
         'entity_id',
         'event_created_by',
         'event_created_at',
+        'responsible_contact',
+        'responsible_lead',
+        'source',
+        'category',
     ];
 }

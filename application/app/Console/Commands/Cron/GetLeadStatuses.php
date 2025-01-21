@@ -66,6 +66,9 @@ class GetLeadStatuses extends Command
         //6 14126335
         //5 10948758
 
+
+        $fields->getBy('Компания источник');
+
         $statuses = Status::query()
             ->where('pipeline_id', self::MAIN_PIPELINE_ID)
             ->where('archived', false)
@@ -88,7 +91,7 @@ class GetLeadStatuses extends Command
             foreach ($events as $event) {
 
                 try {
-                    LeadStatus::query()->create([
+                    $leadStatus = LeadStatus::query()->create([
                         'event_id' => $event->id,
                         'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
                         'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
@@ -97,6 +100,32 @@ class GetLeadStatuses extends Command
                         'event_created_by' => $event->getCreatedBy(),
                         'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i:s'),
                     ]);
+
+                    $lead = $this->client->leads()->getOne($leadStatus->entity_id);
+
+                    $leadStatus->responsible_lead = $lead->getResponsibleUserId();
+
+                    $fields = $lead->getCustomFieldsValues()->toArray();
+
+                    foreach ($fields as $field) {
+
+                        if ($field['field_name'] == 'Компания источник') {
+
+                            $leadStatus->company_source = $field['values'][0]['value'];
+                        }
+
+                        if ($field['field_name'] == 'Откуда пришел') {
+
+                            $leadStatus->channel_source = $field['values'][0]['value'];
+                        }
+
+                        if ($field['field_name'] == 'Причина отказа основная') {
+
+                            $leadStatus->loss_reason = $field['values'][0]['value'];
+                        }
+                    }
+                    $leadStatus->save();
+
                 } catch (UniqueConstraintViolationException) {
 
                     break;

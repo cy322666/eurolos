@@ -19,5 +19,11 @@ class LeadStatus extends Model
         'entity_type',
         'event_created_by',
         'event_created_at',
+        'responsible_contact',
+        'responsible_lead',
+        'company_source',
+        'channel_source',
+        'category',
+        'loss_reason',
     ];
 }

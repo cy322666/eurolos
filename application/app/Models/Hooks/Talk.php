@@ -24,5 +24,8 @@ class Talk extends Model
         'is_read',
         'origin',
         'body',
+        'responsible_contact',
+        'responsible_lead',
+        'status_id',
     ];
 }
