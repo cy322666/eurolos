@@ -29,10 +29,9 @@ return new class extends Migration
 
         Schema::table('events_lead_create', function (Blueprint $table) {
 
-            $table->integer('responsible_contact')->nullable();
             $table->integer('responsible_lead')->nullable();
-            $table->string('source')->nullable();
-            $table->string('category')->nullable();
+            $table->string('company_source')->nullable();
+            $table->string('channel_source')->nullable();
         });
 
         Schema::table('events_calls', function (Blueprint $table) {
