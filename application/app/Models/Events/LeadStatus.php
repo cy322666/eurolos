@@ -25,5 +25,13 @@ class LeadStatus extends Model
         'channel_source',
         'category',
         'loss_reason',
+        'returned_failure',
+        'lead_class',
+        'measured',
+        'date_measured',
+        'date_sale_op',
+        'date_install',
+        'event_created_date',
+        'event_created_time',
     ];
 }

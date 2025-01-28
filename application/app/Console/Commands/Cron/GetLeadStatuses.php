@@ -50,6 +50,18 @@ class GetLeadStatuses extends Command
         MAIN_PIPELINE_ID = 55089,
         STATUS_SORT_AT = 90;
 
+    static array $fields = [
+        'Компания источник' => 'company_source',
+        'Откуда пришел' => 'channel_source',
+        'Причина отказа основная' => 'loss_reason',
+        'Реанинирован из отказа' => 'returned_failure',
+        'Классификация лида' => 'lead_class',
+        'Замер выполнен' => 'measured',
+        'Дата замера' => 'date_measured',
+        'Дата NEW (монтаж)' => 'date_install',
+        'ОП' => 'date_sale_op',
+    ];
+
     /**
      * Execute the console command.
      */
@@ -65,9 +77,6 @@ class GetLeadStatuses extends Command
         //4 10948758???
         //6 14126335
         //5 10948758
-
-
-        $fields->getBy('Компания источник');
 
         $statuses = Status::query()
             ->where('pipeline_id', self::MAIN_PIPELINE_ID)
@@ -98,30 +107,25 @@ class GetLeadStatuses extends Command
                         'entity_id' => $event->getEntityId(),
                         'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
                         'event_created_by' => $event->getCreatedBy(),
-                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i:s'),
+                        'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
+                        'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
+                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
                     ]);
 
                     $lead = $this->client->leads()->getOne($leadStatus->entity_id);
 
                     $leadStatus->responsible_lead = $lead->getResponsibleUserId();
 
-                    $fields = $lead->getCustomFieldsValues()->toArray();
+                    $cFields = $lead->getCustomFieldsValues()->toArray();
 
-                    foreach ($fields as $field) {
+                    foreach ($cFields as $cField) {
 
-                        if ($field['field_name'] == 'Компания источник') {
+                        foreach (static::$fields as $fieldName => $fieldKey) {
 
-                            $leadStatus->company_source = $field['values'][0]['value'];
-                        }
+                            if ($cField['field_name'] == $fieldName) {
 
-                        if ($field['field_name'] == 'Откуда пришел') {
-
-                            $leadStatus->channel_source = $field['values'][0]['value'];
-                        }
-
-                        if ($field['field_name'] == 'Причина отказа основная') {
-
-                            $leadStatus->loss_reason = $field['values'][0]['value'];
+                                $leadStatus->{$fieldKey} = $cField['values'][0]['value'];
+                            }
                         }
                     }
                     $leadStatus->save();
