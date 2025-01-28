@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command('app:get-entities')->dailyAt('07:00');
          $schedule->command('app:get-lead-create')->hourly();
+         $schedule->command('app:get-lead-create')->everyThirtyMinutes();
          $schedule->command('app:get-lead-statuses')->hourly();
          $schedule->command('app:get-calls')->hourly();
 
