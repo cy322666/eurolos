@@ -55,7 +55,13 @@ class GetLeads extends Command
 
             foreach ($leadIds as $leadId) {
 
-                $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
+                try {
+                    $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
+
+                } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
+
+                    continue;
+                }
 
                 $fields = [];
 
@@ -82,7 +88,10 @@ class GetLeads extends Command
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
-//            dd($e->getFile().' '.$e->getLine(), $e->getLastRequestInfo());
+//            dd($e->getFile().' '.$e->getLine(), $lead->toArray());
+
+//            dd($e->);
+
             Log::error(json_encode($e->getLastRequestInfo()));
 
             throwException($e->getMessage() .' '. $e->getLastRequestInfo());
