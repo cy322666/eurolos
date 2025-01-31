@@ -11,6 +11,7 @@ use AmoCRM\Models\LeadModel;
 use App\Facades\amoCRM\amoCRM;
 use App\Models\Entities\Lead;
 use App\Models\Entities\Staff;
+use App\Models\Entities\Status;
 use App\Models\Events\LeadCreate;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -86,8 +87,13 @@ class GetLeads extends Command
                     'lead_created_time' => $createdAt->format('H:i:s'),
                     'contact_id' => $lead->getContacts()?->first()?->id,
                     'responsible_lead' => $lead->getResponsibleUserId(),
+                    'status_id' => $lead->getStatusId(),
                     'responsible_name' => Staff::query()
                         ->where('staff_id', $lead->getResponsibleUserId())
+                        ->first()
+                            ?->name,
+                    'status_name' => Status::query()
+                        ->where('status_id', $lead->getStatusId())
                         ->first()
                             ?->name,
                 ]);

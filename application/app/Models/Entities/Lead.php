@@ -29,5 +29,7 @@ class Lead extends Model
         'date_install',
         'first_touch',
         'responsible_name',
+        'status_id',
+        'status_name',
     ];
 }
