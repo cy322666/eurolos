@@ -4,7 +4,10 @@ namespace App\Jobs\Events;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMMissedTokenException;
+use AmoCRM\Models\LeadModel;
 use App\Facades\amoCRM\amoCRM;
+use App\Models\Entities\Staff;
+use App\Models\Entities\Status;
 use App\Models\Hooks\Talk;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -33,6 +36,12 @@ class TalkJob implements ShouldQueue
      */
     public function handle(Request $request): void
     {
+        $this->client = amoCRM::long();
+
+        $lead = $this->client->leads()->getOne((int)$request->talk['add'][0]['entity_id'], [LeadModel::CONTACTS]);
+
+        $createdAt = Carbon::parse($lead->getCreatedAt());
+
         $talk = Talk::query()->create([
             'talk_id' => $request->talk['add'][0]['talk_id'],
             'talk_created_at' => Carbon::now()->format('Y-m-d H:i:s'),
@@ -45,9 +54,9 @@ class TalkJob implements ShouldQueue
             'is_read' => $request->talk['add'][0]['is_read'],
             'origin' => $request->talk['add'][0]['origin'],
             'body' => json_encode($request->talk['add'][0]),
+            'lead_created_date' => $createdAt->format('Y-m-d'),
+            'lead_created_time' => $createdAt->format('H:i:s'),
         ]);
-
-        $this->client = amoCRM::long();
 
         $contact = $this->client->contacts()->getOne($talk->contact_id);
 
@@ -57,6 +66,14 @@ class TalkJob implements ShouldQueue
 
             $talk->responsible_lead = $lead->getResponsibleUserId();
             $talk->status_id = $lead->getStatusId();
+            $talk->responsible_name = Staff::query()
+                ->where('staff_id', $lead->getResponsibleUserId())
+                ->first()
+                ?->name;
+            $talk->status_name = Status::query()
+                ->where('status_id', $lead->getStatusId())
+                ->first()
+                ?->status_name;
         }
 
         $talk->responsible_contact = $contact->getResponsibleUserId();

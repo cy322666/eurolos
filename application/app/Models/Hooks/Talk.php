@@ -27,5 +27,9 @@ class Talk extends Model
         'responsible_contact',
         'responsible_lead',
         'status_id',
+        'responsible_name',
+        'status_name',
+        'lead_created_date',
+        'lead_created_time',
     ];
 }
