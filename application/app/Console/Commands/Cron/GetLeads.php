@@ -95,7 +95,7 @@ class GetLeads extends Command
                     'status_name' => Status::query()
                         ->where('status_id', $lead->getStatusId())
                         ->first()
-                            ?->name,
+                            ?->status_name,
                 ]);
 
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);
