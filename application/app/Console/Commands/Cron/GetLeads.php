@@ -78,7 +78,11 @@ class GetLeads extends Command
                     }
                 }
 
+                $createdAt = Carbon::parse($lead->getCreatedAt());
+
                 $fields = array_merge($fields, [
+                    'lead_created_date' => $createdAt->format('Y-m-d'),
+                    'lead_created_time' => $createdAt->format('H:i:s'),
                     'contact_id' => $lead->getContacts()?->first()?->id,
                     'responsible_lead' => $lead->getResponsibleUserId(),
                 ]);
