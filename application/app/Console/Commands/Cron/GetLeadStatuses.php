@@ -60,6 +60,7 @@ class GetLeadStatuses extends Command
         'Дата замера' => 'date_measured',
         'Дата NEW (монтаж)' => 'date_install',
         'ОП' => 'date_sale_op',
+        'Первое касание' => 'first_touch',
     ];
 
     /**

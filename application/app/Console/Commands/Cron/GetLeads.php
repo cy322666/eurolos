@@ -10,6 +10,7 @@ use AmoCRM\Filters\LeadsFilter;
 use AmoCRM\Models\LeadModel;
 use App\Facades\amoCRM\amoCRM;
 use App\Models\Entities\Lead;
+use App\Models\Entities\Staff;
 use App\Models\Events\LeadCreate;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -85,6 +86,10 @@ class GetLeads extends Command
                     'lead_created_time' => $createdAt->format('H:i:s'),
                     'contact_id' => $lead->getContacts()?->first()?->id,
                     'responsible_lead' => $lead->getResponsibleUserId(),
+                    'responsible_name' => Staff::query()
+                        ->where('staff_id', $lead->getResponsibleUserId())
+                        ->first()
+                            ?->name,
                 ]);
 
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);

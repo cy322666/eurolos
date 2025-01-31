@@ -27,5 +27,7 @@ class Lead extends Model
         'lead_created_time',
         'date_sale_op',
         'date_install',
+        'first_touch',
+        'responsible_name',
     ];
 }
