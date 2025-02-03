@@ -33,5 +33,6 @@ class LeadStatus extends Model
         'date_install',
         'event_created_date',
         'event_created_time',
+        'measurer',
     ];
 }
