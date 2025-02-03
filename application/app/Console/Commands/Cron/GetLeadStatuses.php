@@ -100,6 +100,13 @@ class GetLeadStatuses extends Command
             foreach ($events as $event) {
 
                 try {
+                    $lead = $this->client->leads()->getOne($event->getEntityId());
+
+                    if ($lead->getPipelineId() !== self::MAIN_PIPELINE_ID) {
+
+                        continue;
+                    }
+
                     $leadStatus = LeadStatus::query()->create([
                         'event_id' => $event->id,
                         'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
@@ -111,8 +118,6 @@ class GetLeadStatuses extends Command
                         'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
                         'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
                     ]);
-
-                    $lead = $this->client->leads()->getOne($leadStatus->entity_id);
 
                     $leadStatus->responsible_lead = $lead->getResponsibleUserId();
 
