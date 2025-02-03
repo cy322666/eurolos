@@ -31,5 +31,6 @@ class Lead extends Model
         'responsible_name',
         'status_id',
         'status_name',
+        'doc',
     ];
 }

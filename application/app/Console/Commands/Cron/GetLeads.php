@@ -47,6 +47,7 @@ class GetLeads extends Command
         'Дата NEW (монтаж)' => 'date_install',
         'ОП' => 'date_sale_op',
         'Первое касание' => 'first_touch',
+        'Отправлено на DOC' => 'doc',
     ];
 
     /**
