@@ -36,6 +36,19 @@ class GetLeads extends Command
      */
     protected $description = 'Command description';
 
+    static array $fields = [
+        'Компания источник' => 'company_source',
+        'Откуда пришел' => 'channel_source',
+        'Причина отказа основная' => 'loss_reason',
+        'Реанинирован из отказа' => 'returned_failure',
+        'Классификация лида' => 'lead_class',
+        'Замер выполнен' => 'measured',
+        'Дата замера' => 'date_measured',
+        'Дата NEW (монтаж)' => 'date_install',
+        'ОП' => 'date_sale_op',
+        'Первое касание' => 'first_touch',
+    ];
+
     /**
      * Execute the console command.
      */
@@ -71,7 +84,7 @@ class GetLeads extends Command
 
                 foreach ($cFields as $cField) {
 
-                    foreach (GetLeadStatuses::$fields as $fieldName => $fieldKey) {
+                    foreach (static::$fields as $fieldName => $fieldKey) {
 
                         if ($cField['field_name'] == $fieldName) {
 

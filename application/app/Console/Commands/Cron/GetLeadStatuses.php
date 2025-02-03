@@ -60,7 +60,6 @@ class GetLeadStatuses extends Command
         'Дата замера' => 'date_measured',
         'Дата NEW (монтаж)' => 'date_install',
         'ОП' => 'date_sale_op',
-        'Первое касание' => 'first_touch',
     ];
 
     /**
@@ -83,7 +82,6 @@ class GetLeadStatuses extends Command
             ->where('pipeline_id', self::MAIN_PIPELINE_ID)
             ->where('archived', false)
             ->where('status_sort', '>=', self::STATUS_SORT_AT)
-            ->limit(2)
             ->get()
             ->sortBy('status_sort')
             ->pluck('status_id')
@@ -131,10 +129,7 @@ class GetLeadStatuses extends Command
                     }
                     $leadStatus->save();
 
-                } catch (UniqueConstraintViolationException) {
-
-                    break;
-                }
+                } catch (UniqueConstraintViolationException) {}
             }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
