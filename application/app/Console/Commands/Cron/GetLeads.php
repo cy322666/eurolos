@@ -72,8 +72,6 @@ class GetLeads extends Command
 
             foreach ($leadIds as $leadId) {
 
-                sleep(1);
-
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
