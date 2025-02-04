@@ -71,6 +71,9 @@ class GetLeads extends Command
                 ->pluck('entity_id');
 
             foreach ($leadIds as $leadId) {
+
+                sleep(1);
+
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
@@ -78,6 +81,8 @@ class GetLeads extends Command
                         ->where('entity_id', $leadId)
                         ->first()
                         ->update(['responsible_lead' => 'closed']);
+
+                    sleep(2);
 
                     continue;
                 }
