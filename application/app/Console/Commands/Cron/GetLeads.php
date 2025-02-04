@@ -128,9 +128,9 @@ class GetLeads extends Command
 
 //            dd($e->);
 
-            Log::error(json_encode($e->getLastRequestInfo()));
+//            Log::error(json_encode($e->getLastRequestInfo()));
 
-            throwException($e->getMessage());
+            dd($e->getMessage());
         }
     }
 }
