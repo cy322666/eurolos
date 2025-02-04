@@ -103,7 +103,6 @@ class GetLeadCreate extends Command
             14126338,
             14126335,
             65767725,
-
         ]);
 //        $filter->setCreatedAt(Carbon::parse('2025-01-01')->format('Y-m-d H:i:s'));
 
