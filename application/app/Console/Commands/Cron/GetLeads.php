@@ -133,8 +133,6 @@ class GetLeads extends Command
 //            Log::error(json_encode($e->getLastRequestInfo()));
 
             dump($e->getMessage());
-
-            sleep(2);
         }
     }
 }
