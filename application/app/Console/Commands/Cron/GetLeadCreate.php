@@ -43,35 +43,35 @@ class GetLeadCreate extends Command
     {
         $this->client = amoCRM::long();
 
-        $filter = (new EventsFilter())
-            ->setTypes(['lead_added'])
-            ->setLimit(500);
-
-        try {
-            $events = $this->client->events()->get($filter);
-
-            /** @var EventModel $event */
-            foreach ($events as $event) {
-
-                try {
-                    LeadCreate::query()->create([
-                        'event_id' => $event->id,
-                        'entity_id' => $event->getEntityId(),
-                        'event_created_by' => $event->getCreatedBy(),
-                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i:s'),
-                    ]);
-                } catch (UniqueConstraintViolationException) {
-
-                        break;
-                }
-            }
-
-        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-
-            Log::error(json_encode($e->getLastRequestInfo()));
-
-            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
-        }
+//        $filter = (new EventsFilter())
+//            ->setTypes(['lead_added'])
+//            ->setLimit(500);
+//
+//        try {
+//            $events = $this->client->events()->get($filter);
+//
+//            /** @var EventModel $event */
+//            foreach ($events as $event) {
+//
+//                try {
+//                    LeadCreate::query()->create([
+//                        'event_id' => $event->id,
+//                        'entity_id' => $event->getEntityId(),
+//                        'event_created_by' => $event->getCreatedBy(),
+//                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i:s'),
+//                    ]);
+//                } catch (UniqueConstraintViolationException) {
+//
+//                        break;
+//                }
+//            }
+//
+//        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
+//
+//            Log::error(json_encode($e->getLastRequestInfo()));
+//
+//            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
+//        }
 
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
