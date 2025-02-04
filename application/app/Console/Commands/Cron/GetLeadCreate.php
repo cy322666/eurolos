@@ -81,7 +81,7 @@ class GetLeadCreate extends Command
 
         foreach ($leads as $lead) {
 
-            LeadStatus::query()->firstOrCreate(
+            LeadCreate::query()->firstOrCreate(
                 ['entity_id' => $lead->getId()],
                 [
                     'event_id' => rand(1, 99999999999999999),
