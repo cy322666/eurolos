@@ -7,9 +7,11 @@ use AmoCRM\Exceptions\AmoCRMApiException;
 use AmoCRM\Exceptions\AmoCRMMissedTokenException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use AmoCRM\Filters\EventsFilter;
+use AmoCRM\Filters\LeadsFilter;
 use AmoCRM\Models\EventModel;
 use App\Facades\amoCRM\amoCRM;
 use App\Models\Events\LeadCreate;
+use App\Models\Events\LeadStatus;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -69,6 +71,25 @@ class GetLeadCreate extends Command
             Log::error(json_encode($e->getLastRequestInfo()));
 
             throwException($e->getMessage() .' '. $e->getLastRequestInfo());
+        }
+
+        $filter = (new LeadsFilter());
+        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setCreatedAt(Carbon::parse('2025-01-01')->format('Y-m-d H:i:s'));
+
+        $leads = $this->client->leads()->get($filter);
+
+        foreach ($leads as $lead) {
+
+            LeadStatus::query()->firstOrCreate(
+                ['entity_id' => $lead->getLeadId()],
+                [
+                    'event_id' => rand(1, 99999999999999999),
+                    'entity_id' => $lead->getLeadId(),
+                    'event_created_by' => $lead->getCreatedBy(),
+                    'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
+                ]
+            );
         }
     }
 }
