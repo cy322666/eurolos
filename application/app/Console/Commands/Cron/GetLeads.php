@@ -71,19 +71,15 @@ class GetLeads extends Command
                 ->pluck('entity_id');
 
             foreach ($leadIds as $leadId) {
-
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
-
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
+                    LeadCreate::query()
+                        ->where('lead_id', $leadId)
+                        ->first()
+                        ->update(['responsible_lead' => 'closed']);
 
-                        LeadCreate::query()
-                            ->where('lead_id', $leadId)
-                            ->first()
-                            ->update(['responsible_lead' => 'closed']);
-
-                        continue;
-                    }
+                    continue;
                 }
 
                 $fields = [];
@@ -91,11 +87,8 @@ class GetLeads extends Command
                 $cFields = $lead->getCustomFieldsValues()->toArray();
 
                 foreach ($cFields as $cField) {
-
                     foreach (static::$fields as $fieldName => $fieldKey) {
-
                         if ($cField['field_name'] == $fieldName) {
-
                             $fields[$fieldKey] = $cField['values'][0]['value'];
                         }
                     }
@@ -122,12 +115,12 @@ class GetLeads extends Command
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);
 
                 if ($lead->getStatusId() == 143) {
-
                     LeadCreate::query()
                         ->where('lead_id', $lead->getId())
                         ->first()
                         ->update(['responsible_lead' => 'closed']);
                 }
+            }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
