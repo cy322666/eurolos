@@ -69,7 +69,7 @@ class GetLeads extends Command
                 ->where('responsible_lead', null)
                 ->get()
                 ->pluck('entity_id')
-                ->sortByDesc('id');
+                ->sortBy('updated_at');
 
             foreach ($leadIds as $leadId) {
 
