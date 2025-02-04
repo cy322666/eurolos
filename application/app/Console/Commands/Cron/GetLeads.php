@@ -66,7 +66,7 @@ class GetLeads extends Command
 //            $leads = $this->client->leads()->get($filter);
 
             $leadIds = LeadCreate::query()
-                ->where('responsible_lead', '=', 'closed')
+                ->where('responsible_lead', 'closed')
                 ->get()
                 ->pluck('entity_id');
 
