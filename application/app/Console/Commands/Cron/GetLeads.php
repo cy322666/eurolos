@@ -137,6 +137,7 @@ class GetLeads extends Command
 //            Log::error(json_encode($e->getLastRequestInfo()));
 
             dump($e->getMessage());
+            dump($e);
         }
     }
 }
