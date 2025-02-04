@@ -76,7 +76,7 @@ class GetLeads extends Command
 
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
 
-                    dd($e->getMessage());
+                    dump($e->getMessage(), $leadId);
                 }
 
                 $fields = [];
