@@ -68,8 +68,8 @@ class GetLeads extends Command
             $leadIds = LeadCreate::query()
                 ->where('responsible_lead', null)
                 ->get()
-                ->sortDesc('id')
-                ->pluck('entity_id');
+                ->pluck('entity_id')
+                ->sortDesc('id');
 
             foreach ($leadIds as $leadId) {
 
