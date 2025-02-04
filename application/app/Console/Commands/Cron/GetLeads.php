@@ -119,6 +119,8 @@ class GetLeads extends Command
                         ->where('entity_id', $lead->getId())
                         ->first()
                         ->update(['responsible_lead' => 'closed']);
+
+                    sleep(2);
                 }
             }
 
@@ -130,7 +132,9 @@ class GetLeads extends Command
 
 //            Log::error(json_encode($e->getLastRequestInfo()));
 
-            dd($e->getMessage());
+            dump($e->getMessage());
+
+            sleep(2);
         }
     }
 }
