@@ -85,7 +85,7 @@ class GetLeadCreate extends Command
                 ['entity_id' => $lead->getLeadId()],
                 [
                     'event_id' => rand(1, 99999999999999999),
-                    'entity_id' => $lead->getLeadId(),
+                    'entity_id' => $lead->getId(),
                     'event_created_by' => $lead->getCreatedBy(),
                     'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
                 ]
