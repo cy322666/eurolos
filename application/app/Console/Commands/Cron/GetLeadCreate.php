@@ -75,6 +75,7 @@ class GetLeadCreate extends Command
 
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setLimit(500);
         $filter->setStatuses([
             24707860,
             9950760,
