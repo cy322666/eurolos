@@ -66,6 +66,7 @@ class GetLeads extends Command
 //            $leads = $this->client->leads()->get($filter);
 
             $leadIds = LeadCreate::query()
+                ->where('responsible_lead', '=', 'closed')
                 ->get()
                 ->pluck('entity_id');
 
@@ -76,7 +77,13 @@ class GetLeads extends Command
 
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
 
-                    dump($e->getMessage(), $leadId);
+                        LeadCreate::query()
+                            ->where('lead_id', $leadId)
+                            ->first()
+                            ->update(['responsible_lead' => 'closed']);
+
+                        continue;
+                    }
                 }
 
                 $fields = [];
@@ -113,7 +120,14 @@ class GetLeads extends Command
                 ]);
 
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);
-            }
+
+                if ($lead->getStatusId() == 143) {
+
+                    LeadCreate::query()
+                        ->where('lead_id', $lead->getId())
+                        ->first()
+                        ->update(['responsible_lead' => 'closed']);
+                }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
