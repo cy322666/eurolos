@@ -130,7 +130,7 @@ class GetLeads extends Command
 
             Log::error(json_encode($e->getLastRequestInfo()));
 
-            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
+            throwException($e->getMessage());
         }
     }
 }
