@@ -75,7 +75,7 @@ class GetLeads extends Command
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
                 } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
                     LeadCreate::query()
-                        ->where('lead_id', $leadId)
+                        ->where('entity_id', $leadId)
                         ->first()
                         ->update(['responsible_lead' => 'closed']);
 
@@ -116,7 +116,7 @@ class GetLeads extends Command
 
                 if ($lead->getStatusId() == 143) {
                     LeadCreate::query()
-                        ->where('lead_id', $lead->getId())
+                        ->where('entity_id', $lead->getId())
                         ->first()
                         ->update(['responsible_lead' => 'closed']);
                 }
