@@ -75,35 +75,6 @@ class GetLeadCreate extends Command
 
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setStatuses([
-            24707860,
-            9950760,
-            65767141,
-            71138757,
-            10071768,
-            65767145,
-            65767149,
-            9996006,
-            65767209,
-            68781613,
-            26705880,
-            65879153,
-            9958824,
-            9959097,
-            33324984,
-            72605217,
-            9958827,
-            65767597,
-            33698169,
-            65767569,
-            65767573,
-            11008437,
-            65767669,
-            10948758,
-            14126338,
-            14126335,
-            65767725
-        ]);
 //        $filter->setCreatedAt(Carbon::parse('2025-01-01')->format('Y-m-d H:i:s'));
 
         $leads = $this->client->leads()->get($filter);
