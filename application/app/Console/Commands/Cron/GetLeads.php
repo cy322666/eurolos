@@ -4,6 +4,7 @@ namespace App\Console\Commands\Cron;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMApiException;
+use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Exceptions\AmoCRMMissedTokenException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use AmoCRM\Filters\LeadsFilter;
@@ -77,13 +78,13 @@ class GetLeads extends Command
 
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
-                } catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e) {
+
+                } catch (AmoCRMApiNoContentException $e) {
+
                     LeadCreate::query()
                         ->where('entity_id', $leadId)
                         ->first()
-                        ->update(['responsible_lead' => 'closed']);
-
-                    sleep(2);
+                        ->delete();
 
                     continue;
                 }
@@ -108,38 +109,14 @@ class GetLeads extends Command
                     'contact_id' => $lead->getContacts()?->first()?->id,
                     'responsible_lead' => $lead->getResponsibleUserId(),
                     'status_id' => $lead->getStatusId(),
-//                    'responsible_name' => Staff::query()
-//                        ->where('staff_id', $lead->getResponsibleUserId())
-//                        ->first()
-//                            ?->name,
-//                    'status_name' => Status::query()
-//                        ->where('status_id', $lead->getStatusId())
-//                        ->first()
-//                            ?->status_name,
                 ]);
 
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);
-
-                if ($lead->getStatusId() == 143) {
-                    LeadCreate::query()
-                        ->where('entity_id', $lead->getId())
-                        ->first()
-                        ->update(['responsible_lead' => 'closed']);
-
-                    sleep(2);
-                }
             }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
-//            dd($e->getFile().' '.$e->getLine(), $lead->toArray());
-
-//            dd($e->);
-
-//            Log::error(json_encode($e->getLastRequestInfo()));
-
-            dump($e->getMessage());
-            dump($e);
+            Log::error(__METHOD__, [json_encode($e->getLastRequestInfo())]);
         }
     }
 }
