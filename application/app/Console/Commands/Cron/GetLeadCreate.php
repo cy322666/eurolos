@@ -4,6 +4,7 @@ namespace App\Console\Commands\Cron;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMApiException;
+use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Exceptions\AmoCRMMissedTokenException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use AmoCRM\Filters\EventsFilter;
@@ -36,48 +37,7 @@ class GetLeadCreate extends Command
     protected $description = 'Новые заявки';
     private AmoCRMApiClient $client;
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
-    {
-        $this->client = amoCRM::long();
-
-//        $filter = (new EventsFilter())
-//            ->setTypes(['lead_added'])
-//            ->setLimit(500);
-//
-//        try {
-//            $events = $this->client->events()->get($filter);
-//
-//            /** @var EventModel $event */
-//            foreach ($events as $event) {
-//
-//                try {
-//                    LeadCreate::query()->create([
-//                        'event_id' => $event->id,
-//                        'entity_id' => $event->getEntityId(),
-//                        'event_created_by' => $event->getCreatedBy(),
-//                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i:s'),
-//                    ]);
-//                } catch (UniqueConstraintViolationException) {
-//
-//                        break;
-//                }
-//            }
-//
-//        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-//
-//            Log::error(json_encode($e->getLastRequestInfo()));
-//
-//            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
-//        }
-
-        $filter = (new LeadsFilter());
-        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
-        $filter->setStatuses([
-            24707860,
+    public static array $statuses = [
             9950760,
             65767141,
             71138757,
@@ -104,22 +64,48 @@ class GetLeadCreate extends Command
             14126338,
             14126335,
             65767725,
-        ]);
-//        $filter->setCreatedAt(Carbon::parse('2025-01-01')->format('Y-m-d H:i:s'));
+    ];
 
-        $leads = $this->client->leads()->get($filter);
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $this->client = amoCRM::long();
 
-        foreach ($leads as $lead) {
+        $filter = (new LeadsFilter());
+        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setLimit(500);
+        $filter->setOrder('updated_at', 'desc');
 
-            LeadCreate::query()->firstOrCreate(
-                ['entity_id' => $lead->getId()],
-                [
-                    'event_id' => rand(1, 99999999999999999),
-                    'entity_id' => $lead->getId(),
-                    'event_created_by' => $lead->getCreatedBy(),
-                    'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
-                ]
-            );
+        foreach (static::$statuses as $statusId) {
+
+            $filter->setStatuses([[
+                'status_id'   => $statusId,
+                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
+            ]]);
+
+            try {
+
+                $leads = $this->client->leads()->get($filter);
+
+            } catch (AmoCRMApiNoContentException $e) {
+
+                continue;
+            }
+
+            foreach ($leads as $lead) {
+
+                LeadCreate::query()->firstOrCreate(
+                    ['entity_id' => $lead->getId()],
+                    [
+                        'event_id' => rand(1, 99999999999999999),
+                        'entity_id' => $lead->getId(),
+                        'event_created_by' => $lead->getCreatedBy(),
+                        'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
+                    ]
+                );
+            }
         }
     }
 }
