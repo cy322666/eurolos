@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Console\Commands\Cron;
+
+use AmoCRM\Client\AmoCRMApiClient;
+use AmoCRM\Exceptions\AmoCRMApiNoContentException;
+use AmoCRM\Filters\LeadsFilter;
+use App\Models\Events\LeadCreate;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+
+class GetUpdatedLeads extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:get-updated-leads';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    private AmoCRMApiClient $client;
+
+    public static array $statuses = [
+        142,
+        143,
+    ];
+
+    public function handle()
+    {
+        $filter = (new LeadsFilter());
+        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setLimit(500);
+        $filter->setOrder('updated_at', 'desc');
+        $filter->setClosedAt(Carbon::parse('2025-01-01'));
+//        $filter->setUpdatedAt(Carbon::parse('2025-01-01'));
+
+        foreach (static::$statuses as $statusId) {
+
+            $filter->setStatuses([[
+                'status_id'   => $statusId,
+                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
+            ]]);
+
+            try {
+
+                $leads = $this->client->leads()->get($filter);
+
+            } catch (AmoCRMApiNoContentException $e) {
+
+                continue;
+            }
+
+            foreach ($leads as $lead) {
+
+                LeadCreate::query()->firstOrCreate(
+                    ['entity_id' => $lead->getId()],
+                    [
+                        'event_id' => rand(1, 99999999999999999),
+                        'entity_id' => $lead->getId(),
+                        'event_created_by' => $lead->getCreatedBy(),
+                        'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
+                    ]
+                );
+            }
+        }
+    }
+}
