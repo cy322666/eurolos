@@ -49,6 +49,8 @@ class GetLeads extends Command
         'ОП' => 'date_sale_op',
         'Первое касание' => 'first_touch',
         'Отправлено на DOC' => 'doc',
+        'Замерщик' => 'measurer',
+        'Категория продажи' => 'category',
     ];
 
     /**
