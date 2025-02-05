@@ -88,7 +88,7 @@ class GetLeads extends Command
                     foreach (static::$fields as $fieldName => $fieldKey) {
                         if ($cField['field_name'] == $fieldName) {
 
-                            if ($cField['field_type'] == 'field_type') {
+                            if ($cField['field_type'] == 'date') {
 
                                 $fields[$fieldKey] = $cField['values'][0]['value']
                                     ->timezone('Europe/Moscow')
