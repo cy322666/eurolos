@@ -5,6 +5,7 @@ namespace App\Console\Commands\Cron;
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Filters\LeadsFilter;
+use App\Facades\amoCRM\amoCRM;
 use App\Models\Events\LeadCreate;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -34,6 +35,8 @@ class GetUpdatedLeads extends Command
 
     public function handle()
     {
+        $this->client = amoCRM::long();
+
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(500);
