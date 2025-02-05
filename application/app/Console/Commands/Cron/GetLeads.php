@@ -59,13 +59,6 @@ class GetLeads extends Command
         try {
             $this->client = amoCRM::long();
 
-//            $filter = (new LeadsFilter())
-//                ->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID)
-//                ->setCreatedAt(Carbon::parse('01-01-2025')->timestamp)
-//                ->setLimit(20);
-//
-//            $leads = $this->client->leads()->get($filter);
-
             $leadIds = LeadCreate::query()
                 ->where('responsible_lead', null)
                 ->get()
@@ -73,8 +66,6 @@ class GetLeads extends Command
                 ->sortBy('updated_at');
 
             foreach ($leadIds as $leadId) {
-
-                dump($leadId);
 
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
