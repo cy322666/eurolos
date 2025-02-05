@@ -110,6 +110,7 @@ class GetLeads extends Command
                     'contact_id' => $lead->getContacts()?->first()?->id,
                     'responsible_lead' => $lead->getResponsibleUserId(),
                     'status_id' => $lead->getStatusId(),
+                    'pipeline_id' => $lead->getPipelineId(),
                 ]);
 
                 Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);

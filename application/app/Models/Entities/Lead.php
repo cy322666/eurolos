@@ -32,6 +32,7 @@ class Lead extends Model
         'status_id',
         'status_name',
         'doc',
-        'measurer'
+        'measurer',
+        'pipeline_id'
     ];
 }
