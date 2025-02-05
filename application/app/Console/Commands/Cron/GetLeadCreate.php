@@ -38,6 +38,7 @@ class GetLeadCreate extends Command
     private AmoCRMApiClient $client;
 
     public static array $statuses = [
+            24707860,
             9950760,
             65767141,
             71138757,
@@ -56,7 +57,6 @@ class GetLeadCreate extends Command
             9958827,
             65767597,
             33698169,
-            65767569,
             65767573,
             11008437,
             65767669,
