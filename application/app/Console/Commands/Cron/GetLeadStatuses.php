@@ -107,18 +107,21 @@ class GetLeadStatuses extends Command
                         continue;
                     }
 
-                    $leadStatus = LeadStatus::query()->create([
-                        'event_id' => $event->id,
-                        'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
-                        'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
-                        'entity_id' => $event->getEntityId(),
-                        'pipeline_id' => $lead->getPipelineId(),
-                        'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
-                        'event_created_by' => $event->getCreatedBy(),
-                        'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
-                        'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
-                        'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
-                    ]);
+                    $leadStatus = LeadStatus::query()
+                        ->firstOrCreate([
+                            'event_id' => $event->id,
+                        ], [
+                            'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
+                            'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
+                            'entity_id' => $event->getEntityId(),
+                            'pipeline_id' => $lead->getPipelineId(),
+                            'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
+                            'event_created_by' => $event->getCreatedBy(),
+                            'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
+                            'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
+                            'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
+                        ]
+                    );
 
                     $leadStatus->responsible_lead = $lead->getResponsibleUserId();
 
