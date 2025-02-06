@@ -41,7 +41,6 @@ class GetUpdatedLeads extends Command
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(500);
         $filter->setOrder('updated_at', 'desc');
-        $filter->setClosedAt(Carbon::parse('2025-01-01'));
 
         foreach (static::$statuses as $statusId) {
 
@@ -80,7 +79,32 @@ class GetUpdatedLeads extends Command
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(500);
-        $filter->setCreatedAt(Carbon::parse('2025-02-01'));
+        $filter->setCreatedAt(Carbon::parse('2025-02-01')->timestamp);
+
+        try {
+
+            $leads = $this->client->leads()->get($filter);
+
+            foreach ($leads as $lead) {
+
+                LeadCreate::query()->firstOrCreate(
+                    ['entity_id' => $lead->getId()],
+                    [
+                        'event_id' => rand(1, 99999999999999999),
+                        'entity_id' => $lead->getId(),
+                        'event_created_by' => $lead->getCreatedBy(),
+                        'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
+                    ]
+                );
+            }
+
+        } catch (AmoCRMApiNoContentException $e) {}
+
+
+        $filter = (new LeadsFilter());
+        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setLimit(500);
+        $filter->setClosedAt(Carbon::parse('2025-01-01')->timestamp);
 
         try {
 
