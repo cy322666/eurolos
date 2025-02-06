@@ -100,44 +100,46 @@ class GetLeadStatuses extends Command
             foreach ($events as $event) {
 
                 try {
-                    $lead = $this->client->leads()->getOne($event->getEntityId());
-
-                    if ($lead->getPipelineId() !== self::MAIN_PIPELINE_ID) {
-
-                        continue;
-                    }
 
                     $leadStatus = LeadStatus::query()
-                        ->firstOrCreate([
-                            'event_id' => $event->id,
-                        ], [
-                            'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
-                            'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
-                            'entity_id' => $event->getEntityId(),
-                            'pipeline_id' => $lead->getPipelineId(),
-                            'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
-                            'event_created_by' => $event->getCreatedBy(),
-                            'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
-                            'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
-                            'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
-                        ]
-                    );
+                        ->where()
+                        ->first();
 
-                    $leadStatus->responsible_lead = $lead->getResponsibleUserId();
+                    if (!$leadStatus) {
 
-                    $cFields = $lead->getCustomFieldsValues()->toArray();
+                        $leadStatus = LeadStatus::query()
+                            ->create([
+                                    'event_id' => $event->id,
+                                    'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
+                                    'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
+                                    'entity_id' => $event->getEntityId(),
+//                            'pipeline_id' => $lead->getPipelineId(),
+                                    'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
+                                    'event_created_by' => $event->getCreatedBy(),
+                                    'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
+                                    'event_created_time' => Carbon::parse($event->getCreatedAt())->format('H:i'),
+                                    'event_created_at' => Carbon::parse($event->getCreatedAt())->format('Y-m-d H:i'),
+                                ]
+                            );
 
-                    foreach ($cFields as $cField) {
+                        $lead = $this->client->leads()->getOne($event->getEntityId());
 
-                        foreach (static::$fields as $fieldName => $fieldKey) {
+                        $leadStatus->responsible_lead = $lead->getResponsibleUserId();
 
-                            if ($cField['field_name'] == $fieldName) {
+                        $cFields = $lead->getCustomFieldsValues()->toArray();
 
-                                $leadStatus->{$fieldKey} = $cField['values'][0]['value'];
+                        foreach ($cFields as $cField) {
+
+                            foreach (static::$fields as $fieldName => $fieldKey) {
+
+                                if ($cField['field_name'] == $fieldName) {
+
+                                    $leadStatus->{$fieldKey} = $cField['values'][0]['value'];
+                                }
                             }
                         }
+                        $leadStatus->save();
                     }
-                    $leadStatus->save();
 
                 } catch (UniqueConstraintViolationException) {}
             }
