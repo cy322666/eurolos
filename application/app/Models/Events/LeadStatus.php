@@ -34,5 +34,6 @@ class LeadStatus extends Model
         'event_created_date',
         'event_created_time',
         'measurer',
+        'pipeline_id'
     ];
 }

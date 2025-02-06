@@ -112,6 +112,7 @@ class GetLeadStatuses extends Command
                         'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
                         'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
                         'entity_id' => $event->getEntityId(),
+                        'pipeline_id' => $lead->getPipelineId(),
                         'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
                         'event_created_by' => $event->getCreatedBy(),
                         'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
