@@ -68,7 +68,7 @@ class GetCalls extends Command
 
                 } catch (UniqueConstraintViolationException) {
 
-                    break;
+                    continue;
                 }
             }
 
@@ -103,7 +103,7 @@ class GetCalls extends Command
 
                 } catch (UniqueConstraintViolationException) {
 
-                    break;
+                    continue;
                 }
             }
 
