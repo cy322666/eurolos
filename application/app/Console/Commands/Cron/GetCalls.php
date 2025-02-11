@@ -37,6 +37,19 @@ class GetCalls extends Command
     protected $description = '8) Количество совершенных звонков менеджеров (сумма, без разделения на входящие и исходящие). С фильтрацией по менеджерам';
     private AmoCRMApiClient $client;
 
+    public array $users = [
+        '2406231'  ,
+        '11019801' ,
+        '9469981'  ,
+        '10979089' ,
+        '6725790'  ,
+        '10623901' ,
+        '11565237' ,
+        '11363813' ,
+        '1442668'  ,
+        '11603537' ,
+    ];
+
     /**
      * Execute the console command.
      */
@@ -44,74 +57,83 @@ class GetCalls extends Command
     {
         $this->client = amoCRM::long();
 
-        $filter = (new EventsFilter())
-            ->setTypes(['incoming_call'])
-            ->setLimit(500);
+        foreach ($this->users as $userId) {
 
-        try {
+            $filter = (new EventsFilter())
+                ->setTypes(['incoming_call'])
+                ->setCreatedBy($userId)
+                ->setLimit(500);
 
-            $calls = $this->client->events()->get($filter);
+            try {
 
-            /** @var EventModel $call */
-            foreach ($calls as $call) {
+                $calls = $this->client->events()->get($filter);
 
-                try {
-                    Call::query()->create([
-                        'event_id' => $call->getId(),
-                        'type' => $call->getType(),
-                        'entity_id' => $call->getEntityId(),
-                        'entity_type' => $call->getEntityType() == 'contact' ? 1 : 2,
-                        'created_by' => $call->getCreatedBy(),
-                        'call_created_at' => Carbon::parse($call->getCreatedAt())->format('Y-m-d H:i:s'),
-                        'call_created_timestamp' => (int)$call->getCreatedAt(),
-                    ]);
+                /** @var EventModel $call */
+                foreach ($calls as $call) {
 
-                } catch (UniqueConstraintViolationException) {
+                    try {
+                        Call::query()->create([
+                            'event_id' => $call->getId(),
+                            'type' => $call->getType(),
+                            'entity_id' => $call->getEntityId(),
+                            'entity_type' => $call->getEntityType() == 'contact' ? 1 : 2,
+                            'created_by' => $call->getCreatedBy(),
+                            'call_created_at' => Carbon::parse($call->getCreatedAt())->format('Y-m-d H:i:s'),
+                            'call_created_timestamp' => (int)$call->getCreatedAt(),
+                        ]);
 
-                    continue;
+                    } catch (UniqueConstraintViolationException) {
+
+                        continue;
+                    }
                 }
+
+            } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
+
+                Log::error(json_encode($e->getLastRequestInfo()));
+
+                throwException($e->getMessage() .' '. $e->getLastRequestInfo());
             }
-
-        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-
-            Log::error(json_encode($e->getLastRequestInfo()));
-
-            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
         }
 
-        $filter = (new EventsFilter())
-            ->setTypes(['outgoing_call'])
-            ->setLimit(500);
 
-        try {
+        foreach ($this->users as $userId) {
 
-            $calls = $this->client->events()->get($filter);
+            $filter = (new EventsFilter())
+                ->setTypes(['outgoing_call'])
+                ->setCreatedBy($userId)
+                ->setLimit(500);
 
-            /** @var EventModel $call */
-            foreach ($calls as $call) {
+            try {
 
-                try {
-                    Call::query()->create([
-                        'event_id' => $call->getId(),
-                        'type' => $call->getType(),
-                        'entity_id' => $call->getEntityId(),
-                        'entity_type' => $call->getEntityType() == 'contact' ? 1 : 2,
-                        'created_by' => $call->getCreatedBy(),
-                        'call_created_at' => Carbon::parse($call->getCreatedAt())->format('Y-m-d H:i:s'),
-                        'call_created_timestamp' => (int)$call->getCreatedAt(),
-                    ]);
+                $calls = $this->client->events()->get($filter);
 
-                } catch (UniqueConstraintViolationException) {
+                /** @var EventModel $call */
+                foreach ($calls as $call) {
 
-                    continue;
+                    try {
+                        Call::query()->create([
+                            'event_id' => $call->getId(),
+                            'type' => $call->getType(),
+                            'entity_id' => $call->getEntityId(),
+                            'entity_type' => $call->getEntityType() == 'contact' ? 1 : 2,
+                            'created_by' => $call->getCreatedBy(),
+                            'call_created_at' => Carbon::parse($call->getCreatedAt())->format('Y-m-d H:i:s'),
+                            'call_created_timestamp' => (int)$call->getCreatedAt(),
+                        ]);
+
+                    } catch (UniqueConstraintViolationException) {
+
+                        continue;
+                    }
                 }
+
+            } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
+
+                Log::error(json_encode($e->getLastRequestInfo()));
+
+                throwException($e->getMessage() .' '. $e->getLastRequestInfo());
             }
-
-        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-
-            Log::error(json_encode($e->getLastRequestInfo()));
-
-            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
         }
     }
 }
