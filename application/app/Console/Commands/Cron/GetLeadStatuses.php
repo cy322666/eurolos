@@ -69,15 +69,6 @@ class GetLeadStatuses extends Command
     public function handle()
     {
         $this->client = amoCRM::long();
-        //сохраняем в events и далее раскидываем по табличкам с нужной инфой
-
-        //  55089
-        //1 65767209
-        //2 65767597
-        //7 142
-        //4 10948758???
-        //6 14126335
-        //5 10948758
 
         $statuses = Status::query()
             ->where('pipeline_id', self::MAIN_PIPELINE_ID)
@@ -102,18 +93,17 @@ class GetLeadStatuses extends Command
                 try {
 
                     $leadStatus = LeadStatus::query()
-                        ->where()
+                        ->where('event_id', $event->getId())
                         ->first();
 
                     if (!$leadStatus) {
 
                         $leadStatus = LeadStatus::query()
                             ->create([
-                                    'event_id' => $event->id,
+                                    'event_id' => $event->getId(),
                                     'status_id_before' => $event->getValueBefore()[0]['lead_status']['id'],
                                     'status_id_after' => $event->getValueAfter()[0]['lead_status']['id'],
                                     'entity_id' => $event->getEntityId(),
-//                            'pipeline_id' => $lead->getPipelineId(),
                                     'entity_type' => $event->getEntityType() == 'lead' ? 2 : 1,
                                     'event_created_by' => $event->getCreatedBy(),
                                     'event_created_date' => Carbon::parse($event->getCreatedAt())->format('Y-m-d'),
