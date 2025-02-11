@@ -12,14 +12,23 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-         $schedule->command('app:get-entities')->dailyAt('07:00');
-         $schedule->command('app:get-lead-create')->dailyAt('01:00');
-         $schedule->command('app:get-lead-statuses')->dailyAt('02:00');
-         $schedule->command('app:get-updated-leads')->dailyAt('03:00');
-         $schedule->command('app:get-leads')->dailyAt('04:00');
-         $schedule->command('app:get-calls')->dailyAt('05:00');
+        //9 - 9.30
+        //
+        $schedule->command('app:get-entities')->dailyAt('08:00');
+        $schedule->command('app:get-lead-create')->dailyAt('08:00');
+        $schedule->command('app:get-lead-statuses')->dailyAt('08:05');
+        $schedule->command('app:get-updated-leads')->dailyAt('08:10');
+        $schedule->command('app:get-calls')->dailyAt('08:10');
+        $schedule->command('app:get-leads')->dailyAt('08:15');
 
-         $schedule->command('telescope:prune --hours=72')->daily();
+        $schedule->command('app:get-entities')->dailyAt('20:00');
+        $schedule->command('app:get-lead-create')->dailyAt('20:00');
+        $schedule->command('app:get-lead-statuses')->dailyAt('20:05');
+        $schedule->command('app:get-updated-leads')->dailyAt('20:10');
+        $schedule->command('app:get-calls')->dailyAt('20:10');
+        $schedule->command('app:get-leads')->dailyAt('20:15');
+
+        $schedule->command('telescope:prune --hours=72')->daily();
     }
 
     /**
