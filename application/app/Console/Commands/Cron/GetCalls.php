@@ -45,7 +45,42 @@ class GetCalls extends Command
         $this->client = amoCRM::long();
 
         $filter = (new EventsFilter())
-            ->setTypes(['incoming_call', 'outgoing_call'])
+            ->setTypes(['incoming_call'])
+            ->setLimit(500);
+
+        try {
+
+            $calls = $this->client->events()->get($filter);
+
+            /** @var EventModel $call */
+            foreach ($calls as $call) {
+
+                try {
+                    Call::query()->create([
+                        'event_id' => $call->getId(),
+                        'type' => $call->getType(),
+                        'entity_id' => $call->getEntityId(),
+                        'entity_type' => $call->getEntityType() == 'contact' ? 1 : 2,
+                        'created_by' => $call->getCreatedBy(),
+                        'call_created_at' => Carbon::parse($call->getCreatedAt())->format('Y-m-d H:i:s'),
+                        'call_created_timestamp' => (int)$call->getCreatedAt(),
+                    ]);
+
+                } catch (UniqueConstraintViolationException) {
+
+                    break;
+                }
+            }
+
+        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
+
+            Log::error(json_encode($e->getLastRequestInfo()));
+
+            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
+        }
+
+        $filter = (new EventsFilter())
+            ->setTypes(['outgoing_call'])
             ->setLimit(500);
 
         try {
