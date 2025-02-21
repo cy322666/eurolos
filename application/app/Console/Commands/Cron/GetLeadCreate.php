@@ -11,6 +11,7 @@ use AmoCRM\Filters\EventsFilter;
 use AmoCRM\Filters\LeadsFilter;
 use AmoCRM\Models\EventModel;
 use App\Facades\amoCRM\amoCRM;
+use App\Models\Entities\Lead;
 use App\Models\Events\LeadCreate;
 use App\Models\Events\LeadStatus;
 use Carbon\Carbon;
@@ -39,6 +40,7 @@ class GetLeadCreate extends Command
 
     public static array $statuses = [
             24707860,
+            65767209,
             9950760,
             65767141,
             71138757,
@@ -96,15 +98,7 @@ class GetLeadCreate extends Command
 
             foreach ($leads as $lead) {
 
-                LeadCreate::query()->firstOrCreate(
-                    ['entity_id' => $lead->getId()],
-                    [
-                        'event_id' => rand(1, 99999999999999999),
-                        'entity_id' => $lead->getId(),
-                        'event_created_by' => $lead->getCreatedBy(),
-                        'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
-                    ]
-                );
+                Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
             }
         }
     }

@@ -19,14 +19,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-lead-statuses')->dailyAt('08:01');
         $schedule->command('app:get-updated-leads')->dailyAt('08:02');
         $schedule->command('app:get-calls')->dailyAt('08:03');
-        $schedule->command('app:get-leads')->dailyAt('08:05');
+        $schedule->command('app:get-leads 10000')->dailyAt('08:05');
 
         $schedule->command('app:get-entities')->dailyAt('16:00');
         $schedule->command('app:get-lead-create')->dailyAt('16:00');
         $schedule->command('app:get-lead-statuses')->dailyAt('16:01');
         $schedule->command('app:get-updated-leads')->dailyAt('16:02');
         $schedule->command('app:get-calls')->dailyAt('16:03');
-        $schedule->command('app:get-leads')->dailyAt('16:05');
+        $schedule->command('app:get-leads 10000')->dailyAt('16:05');
 
         $schedule->command('telescope:prune --hours=72')->daily();
     }

@@ -27,7 +27,7 @@ class GetLeads extends Command
      *
      * @var string
      */
-    protected $signature = 'app:get-leads';
+    protected $signature = 'app:get-leads {count}';
 
     private AmoCRMApiClient $client;
     /**
@@ -61,23 +61,24 @@ class GetLeads extends Command
         try {
             $this->client = amoCRM::long();
 
-            $leadIds = LeadCreate::query()
-                ->where('responsible_lead', null)
+            $leadIds = Lead::query()
+//                ->where('responsible_lead', null)
+//                ->where('lead_id', 29989378)
+//                ->where('updated_at', '<', Carbon::now()->subDays(15))
+                ->limit($this->argument('count'))
+                ->orderBy('updated_at', 'ASC')
                 ->get()
-                ->pluck('entity_id')
-                ->sortBy('updated_at');
+                ->pluck('lead_id');
 
             foreach ($leadIds as $leadId) {
 
+dump($leadId);
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
 
                 } catch (AmoCRMApiNoContentException $e) {
 
-                    LeadCreate::query()
-                        ->where('entity_id', $leadId)
-                        ->first()
-                        ->delete();
+                    dump($e->getMessage());
 
                     continue;
                 }
@@ -111,14 +112,21 @@ class GetLeads extends Command
                     'responsible_lead' => $lead->getResponsibleUserId(),
                     'status_id' => $lead->getStatusId(),
                     'pipeline_id' => $lead->getPipelineId(),
+                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
-                Lead::query()->updateOrCreate(['lead_id' => $lead->getId()], $fields);
+                Lead::query()
+                    ->where('lead_id', $lead->getId())
+                    ->update($fields);
             }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
+            dump($e->getMessage());
+
             Log::error(__METHOD__, [json_encode($e->getLastRequestInfo())]);
         }
+
+        dd('end');
     }
 }
