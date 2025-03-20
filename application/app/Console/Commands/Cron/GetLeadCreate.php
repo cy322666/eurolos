@@ -7,7 +7,9 @@ use AmoCRM\Exceptions\AmoCRMApiException;
 use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Exceptions\AmoCRMMissedTokenException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
+use AmoCRM\Filters\BaseRangeFilter;
 use AmoCRM\Filters\EventsFilter;
+use AmoCRM\Filters\Interfaces\HasOrderInterface;
 use AmoCRM\Filters\LeadsFilter;
 use AmoCRM\Models\EventModel;
 use App\Facades\amoCRM\amoCRM;
@@ -75,31 +77,66 @@ class GetLeadCreate extends Command
     {
         $this->client = amoCRM::long();
 
-        $filter = (new LeadsFilter());
-        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
-        $filter->setOrder('updated_at', 'desc');
+//        $filter = (new LeadsFilter());
+//        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+//        $filter->setLimit(500);
+//        $filter->setOrder('updated_at', 'desc');
+//
+//        foreach (static::$statuses as $statusId) {
+//
+//            $filter->setStatuses([[
+//                'status_id'   => $statusId,
+//                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
+//            ]]);
+//
+//            try {
+//
+//                $leads = $this->client->leads()->get($filter);
+//
+//            } catch (AmoCRMApiNoContentException $e) {
+//
+//                continue;
+//            }
+//
+//            foreach ($leads as $lead) {
+//
+//                Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
+//            }
+//        }
 
-        foreach (static::$statuses as $statusId) {
+        $rangeFilter = new BaseRangeFilter();
+        $rangeFilter->setFrom(Carbon::create(2025, 03, 01)->timestamp);
+        $rangeFilter->setTo(Carbon::now()->timestamp);
 
-            $filter->setStatuses([[
-                'status_id'   => $statusId,
-                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
-            ]]);
+        try {
 
-            try {
+            for ($page = 1; ; $page++) {
+
+                $filter = (new LeadsFilter());
+                $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+                $filter->setLimit(500);
+                $filter->setPage($page);
+                $filter->setClosedAt($rangeFilter);
 
                 $leads = $this->client->leads()->get($filter);
 
-            } catch (AmoCRMApiNoContentException $e) {
+                if ($leads->isEmpty()) {
 
-                continue;
+                    return;
+                }
+
+                foreach ($leads as $lead) {
+
+                    dump($lead->getId());
+
+                    Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
+                }
             }
 
-            foreach ($leads as $lead) {
+        } catch (AmoCRMApiNoContentException $e) {
 
-                Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
-            }
+            dump($e->getMessage());
         }
+//        filter[updated_at][from]=1575296400&filter[updated_at][to]=1589540009
     }
 }

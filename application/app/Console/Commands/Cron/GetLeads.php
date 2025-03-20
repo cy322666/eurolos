@@ -65,6 +65,7 @@ class GetLeads extends Command
 //                ->where('responsible_lead', null)
 //                ->where('lead_id', 29989378)
 //                ->where('updated_at', '<', Carbon::now()->subDays(15))
+//                ->where('contact_id', null)
                 ->limit($this->argument('count'))
                 ->orderBy('updated_at', 'ASC')
                 ->get()
@@ -72,13 +73,17 @@ class GetLeads extends Command
 
             foreach ($leadIds as $leadId) {
 
-dump($leadId);
+
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
 
                 } catch (AmoCRMApiNoContentException $e) {
 
                     dump($e->getMessage());
+
+                    Lead::query()
+                        ->where('lead_id', $leadId)
+                        ->delete();
 
                     continue;
                 }
@@ -127,6 +132,6 @@ dump($leadId);
             Log::error(__METHOD__, [json_encode($e->getLastRequestInfo())]);
         }
 
-        dd('end');
+        Log::debug('leads end');
     }
 }
