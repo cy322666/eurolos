@@ -22,9 +22,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-lead-create')->dailyAt('07:00');
         $schedule->command('app:get-leads 0')->dailyAt('07:05');
         $schedule->command('app:get-leads 2000')->dailyAt('07:15');
-        $schedule->command('app:get-leads 5000')->dailyAt('07:25');
-        $schedule->command('app:get-leads 7000')->dailyAt('07:35');
-        $schedule->command('app:get-leads 9000')->dailyAt('07:45');
+        $schedule->command('app:get-leads 4000')->dailyAt('07:25');
+        $schedule->command('app:get-leads 6000')->dailyAt('07:35');
+        $schedule->command('app:get-leads 8000')->dailyAt('07:45');
+        $schedule->command('app:get-leads 10000')->dailyAt('07:45');
 
         $schedule->command('app:get-entities')->dailyAt('17:00');
         $schedule->command('app:get-lead-statuses')->dailyAt('17:01');
@@ -34,9 +35,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-lead-create')->dailyAt('16:00');
         $schedule->command('app:get-leads 0')->dailyAt('16:05');
         $schedule->command('app:get-leads 2000')->dailyAt('16:15');
-        $schedule->command('app:get-leads 5000')->dailyAt('16:25');
-        $schedule->command('app:get-leads 7000')->dailyAt('16:35');
-        $schedule->command('app:get-leads 9000')->dailyAt('16:45');
+        $schedule->command('app:get-leads 4000')->dailyAt('16:25');
+        $schedule->command('app:get-leads 6000')->dailyAt('16:35');
+        $schedule->command('app:get-leads 8000')->dailyAt('16:45');
+        $schedule->command('app:get-leads 10000')->dailyAt('16:45');
 
         $schedule->command('telescope:prune --hours=72')->daily();
     }
