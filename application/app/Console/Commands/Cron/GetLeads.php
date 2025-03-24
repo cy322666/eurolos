@@ -66,7 +66,8 @@ class GetLeads extends Command
 //                ->where('lead_id', 29989378)
 //                ->where('updated_at', '<', Carbon::now()->subDays(15))
 //                ->where('contact_id', null)
-                ->limit($this->argument('count'))
+                ->limit(2000)
+                ->offset($this->argument('count'))
                 ->orderBy('updated_at', 'ASC')
                 ->get()
                 ->pluck('lead_id');
