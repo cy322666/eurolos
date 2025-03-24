@@ -80,7 +80,7 @@ class GetLeads extends Command
 
                 } catch (AmoCRMApiNoContentException $e) {
 
-                    Log::error(__METHOD__.' : '.$e->getLine(), $e->getMessage());
+                    Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage()]);
 
                     Lead::query()
                         ->where('lead_id', $leadId)
@@ -128,7 +128,7 @@ class GetLeads extends Command
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
-            Log::error(__METHOD__.' : '.$e->getLine(), $e->getMessage());
+            Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage()]);
 
             Log::error(__METHOD__, [json_encode($e->getLastRequestInfo())]);
         }

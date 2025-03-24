@@ -12,8 +12,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        //9 - 9.30
-        //
         $schedule->command('app:get-entities')->dailyAt('08:00');
         $schedule->command('app:get-lead-statuses')->dailyAt('08:01');
         $schedule->command('app:get-updated-leads')->dailyAt('08:02');

@@ -136,7 +136,7 @@ class GetLeadStatuses extends Command
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
 
-            Log::error(json_encode($e->getLastRequestInfo()));
+            Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage(), $e->getLastRequestInfo()]);
 
             throwException($e->getMessage() .' '. $e->getLastRequestInfo());
         }

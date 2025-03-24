@@ -135,7 +135,7 @@ class GetLeadCreate extends Command
 
         } catch (AmoCRMApiNoContentException $e) {
 
-            Log::error(__METHOD__.' : '.$e->getLine(), $e->getMessage());
+            Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage()]);
         }
     }
 }
