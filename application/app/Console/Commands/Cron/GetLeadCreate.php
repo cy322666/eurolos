@@ -77,32 +77,32 @@ class GetLeadCreate extends Command
     {
         $this->client = amoCRM::long();
 
-//        $filter = (new LeadsFilter());
-//        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-//        $filter->setLimit(500);
-//        $filter->setOrder('updated_at', 'desc');
-//
-//        foreach (static::$statuses as $statusId) {
-//
-//            $filter->setStatuses([[
-//                'status_id'   => $statusId,
-//                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
-//            ]]);
-//
-//            try {
-//
-//                $leads = $this->client->leads()->get($filter);
-//
-//            } catch (AmoCRMApiNoContentException $e) {
-//
-//                continue;
-//            }
-//
-//            foreach ($leads as $lead) {
-//
-//                Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
-//            }
-//        }
+        $filter = (new LeadsFilter());
+        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
+        $filter->setLimit(500);
+        $filter->setOrder('updated_at', 'desc');
+
+        foreach (static::$statuses as $statusId) {
+
+            $filter->setStatuses([[
+                'status_id'   => $statusId,
+                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
+            ]]);
+
+            try {
+
+                $leads = $this->client->leads()->get($filter);
+
+            } catch (AmoCRMApiNoContentException $e) {
+
+                continue;
+            }
+
+            foreach ($leads as $lead) {
+
+                Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
+            }
+        }
 
         $rangeFilter = new BaseRangeFilter();
         $rangeFilter->setFrom(Carbon::create(2025, 03, 01)->timestamp);
@@ -135,8 +135,7 @@ class GetLeadCreate extends Command
 
         } catch (AmoCRMApiNoContentException $e) {
 
-            dump($e->getMessage());
+            Log::error(__METHOD__.' : '.$e->getLine(), $e->getMessage());
         }
-//        filter[updated_at][from]=1575296400&filter[updated_at][to]=1589540009
     }
 }
