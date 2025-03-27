@@ -130,7 +130,7 @@ class GetLeads extends Command
                     'responsible_lead' => $lead->getResponsibleUserId(),
                     'status_id' => $lead->getStatusId(),
                     'pipeline_id' => $lead->getPipelineId(),
-                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+//                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
                 Lead::query()
