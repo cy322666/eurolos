@@ -16,6 +16,7 @@ use App\Models\Entities\Status;
 use App\Models\Events\LeadCreate;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use function PHPUnit\Framework\throwException;
@@ -27,7 +28,7 @@ class GetLeads extends Command
      *
      * @var string
      */
-    protected $signature = 'app:get-leads {count}';
+    protected $signature = 'app:get-leads';
 
     private AmoCRMApiClient $client;
     /**
@@ -61,16 +62,27 @@ class GetLeads extends Command
         try {
             $this->client = amoCRM::long();
 
-            $leadIds = Lead::query()
-//                ->where('responsible_lead', null)
-//                ->where('lead_id', 29989378)
-//                ->where('updated_at', '<', Carbon::now()->subDays(15))
-//                ->where('contact_id', null)
-                ->limit(2000)
-                ->offset($this->argument('count'))
-                ->orderBy('updated_at', 'ASC')
+            $leadIds = DB::table('leads')
+                ->orderBy('updated_at')
+//                ->offset($this->argument('count'))
+//                ->limit(2)
                 ->get()
                 ->pluck('lead_id');
+//                ->sortBy('id');
+//                ->get();
+
+
+//            $leadIds = Lead::query()
+////                ->where('responsible_lead', null)
+////                ->where('lead_id', 29989378)
+////                ->where('updated_at', '<', Carbon::now()->subDays(15))
+////                ->where('contact_id', null)
+//                ->limit(2000)
+//                ->offset($this->argument('count'));
+//                ->orderBy('updated_at', 'ASC')
+//                ->get();
+//            dd($leadIds);
+//                ->pluck('lead_id');
 
             foreach ($leadIds as $leadId) {
 
