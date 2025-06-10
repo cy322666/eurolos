@@ -71,7 +71,7 @@ class GetLeadStatuses extends Command
         $this->client = amoCRM::long();
 
         $statuses = Status::query()
-            ->where('pipeline_id', self::MAIN_PIPELINE_ID)
+//            ->where('pipeline_id', self::MAIN_PIPELINE_ID)
             ->where('archived', false)
             ->where('status_sort', '>=', self::STATUS_SORT_AT)
             ->get()
@@ -135,7 +135,7 @@ class GetLeadStatuses extends Command
             }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-
+dd($e);
             Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage(), $e->getLastRequestInfo()]);
 
             throwException($e->getMessage() .' '. $e->getLastRequestInfo());

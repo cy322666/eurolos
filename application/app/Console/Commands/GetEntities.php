@@ -10,6 +10,7 @@ use AmoCRM\Models\UserModel;
 use App\Facades\amoCRM\amoCRM;
 use App\Models\Entities\Staff;
 use App\Models\Entities\Status;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -42,37 +43,46 @@ class GetEntities extends Command
     {
         $this->client = amoCRM::long();
 
+//        try {
+//            $pipelines = ($this->client->pipelines())->get();
+//
+//            Status::query()->truncate();
+//
+//            foreach ($pipelines as $pipeline) {
+//
+//                if ($pipeline->getId() !== 55089) continue;
+//
+//                $statuses = ($this->client->statuses($pipeline->getId()))->get();
+//
+//                foreach ($statuses as $status) {
+//
+//                    Status::query()->updateOrCreate([
+//                        'status_id'     => $status->getId(),
+//                    ], [
+//                        'status_name'   => $status->getName(),
+//                        'pipeline_id'   => $pipeline->getId(),
+//                        'archived'      => $pipeline->getIsArchive(),
+//                        'pipeline_name' => $pipeline->getName(),
+//                        'status_sort'   => $status->getSort(),
+//                    ]);
+//                }
+//            }
+//
+//        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
+//
+//            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
+//        }
+
         try {
-            $pipelines = ($this->client->pipelines())->get();
+            $users = ($this->client->users())->get(null, ['group']);
 
-            foreach ($pipelines as $pipeline) {
-
-                $statuses = ($this->client->statuses($pipeline->getId()))->get();
-
-                foreach ($statuses as $status) {
-
-                    Status::query()->updateOrCreate([
-                        'status_id'     => $status->getId(),
-                    ], [
-                        'status_name'   => $status->getName(),
-                        'pipeline_id'   => $pipeline->getId(),
-                        'archived'      => $pipeline->getIsArchive(),
-                        'pipeline_name' => $pipeline->getName(),
-                        'status_sort'   => $status->getSort(),
-                    ]);
-                }
-            }
-
-        } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {
-
-            throwException($e->getMessage() .' '. $e->getLastRequestInfo());
-        }
-
-        try {
-            $users = ($this->client->users())->get();
+            Staff::query()->truncate();
 
             /** @var UserModel $user */
             foreach ($users as $user) {
+
+                if ($user->getRights()->getIsActive() !== true ||
+                    $user->getRights()->getGroupId()  !== null) continue;
 
                 Staff::query()->updateOrCreate([
                     'staff_id' => $user->getId(),
@@ -81,6 +91,8 @@ class GetEntities extends Command
                     'email'    => $user->getEmail(),
                     'is_admin' => $user->getRights()->getIsAdmin(),
                     'archived' => !$user->getRights()->getIsActive(),
+                    'role_id'  => $user->getRights()->getRoleId(),
+                    'group_id' => $user->getRights()->getGroupId(),
                 ]);
             }
 

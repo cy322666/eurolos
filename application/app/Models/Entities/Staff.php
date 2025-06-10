@@ -17,5 +17,7 @@ class Staff extends Model
         'email',
         'is_admin',
         'archived',
+        'role_id',
+        'group_id',
     ];
 }
