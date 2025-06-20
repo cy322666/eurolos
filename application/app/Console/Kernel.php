@@ -27,6 +27,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-leads')->dailyAt('08:00');
         $schedule->command('app:get-calls')->dailyAt('08:10');
         $schedule->command('app:get-calls')->dailyAt('10:10');
+
+        $schedule->command('app:get-lead-create')->dailyAt('11:00');
+
         $schedule->command('app:get-calls')->dailyAt('12:10');
         $schedule->command('app:get-calls')->dailyAt('14:10');
         $schedule->command('app:get-calls')->dailyAt('16:15');
