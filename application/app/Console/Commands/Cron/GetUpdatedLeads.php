@@ -53,6 +53,8 @@ class GetUpdatedLeads extends Command
 
     public static function getLeads(int $page, $client)
     {
+        Log::debug(__METHOD__);
+
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(250);
@@ -94,6 +96,8 @@ class GetUpdatedLeads extends Command
 
     public static function getLeadsUpdated(int $page, $client)
     {
+        Log::debug(__METHOD__);
+
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(250);
@@ -125,6 +129,8 @@ class GetUpdatedLeads extends Command
 
     public static function getLeadsClosed(int $page, $client)
     {
+        Log::debug(__METHOD__);
+
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(250);
