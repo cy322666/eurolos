@@ -65,7 +65,7 @@ class GetLeads extends Command
             $leadIds = DB::table('leads')
                 ->orderBy('updated_at')
 //                ->offset($this->argument('count'))
-//                ->limit(2)
+                ->limit(1000)
                 ->get()
                 ->pluck('lead_id');
 //                ->sortBy('id');
