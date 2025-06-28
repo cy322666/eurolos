@@ -38,10 +38,26 @@ class GetUpdatedLeads extends Command
     {
         $this->client = amoCRM::long();
 
+        static::getLeads(1, $this->client);
+        static::getLeads(2, $this->client);
+        static::getLeads(3, $this->client);
+
+        static::getLeadsUpdated(1, $this->client);
+        static::getLeadsUpdated(2, $this->client);
+        static::getLeadsUpdated(3, $this->client);
+
+        static::getLeadsClosed(1, $this->client);
+        static::getLeadsClosed(2, $this->client);
+        static::getLeadsClosed(3, $this->client);
+    }
+
+    public static function getLeads(int $page, $client)
+    {
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
+        $filter->setLimit(250);
         $filter->setOrder('updated_at', 'desc');
+        $filter->setPage($page);
 
         foreach (static::$statuses as $statusId) {
 
@@ -52,7 +68,7 @@ class GetUpdatedLeads extends Command
 
             try {
 
-                $leads = $this->client->leads()->get($filter);
+                $leads = $client->leads()->get($filter);
 
             } catch (AmoCRMApiNoContentException $e) {
 
@@ -74,19 +90,19 @@ class GetUpdatedLeads extends Command
                 );
             }
         }
+    }
 
-
-        //
-
-
+    public static function getLeadsUpdated(int $page, $client)
+    {
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
+        $filter->setLimit(250);
         $filter->setUpdatedAt(Carbon::now()->subDays(2)->timestamp);
+        $filter->setPage($page);
 
         try {
 
-            $leads = $this->client->leads()->get($filter);
+            $leads = $client->leads()->get($filter);
 
             foreach ($leads as $lead) {
 
@@ -105,16 +121,18 @@ class GetUpdatedLeads extends Command
 
             Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
         }
+    }
 
-
+    public static function getLeadsClosed(int $page, $client)
+    {
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
+        $filter->setLimit(250);
         $filter->setClosedAt(Carbon::now()->subDays(2)->timestamp);
 
         try {
 
-            $leads = $this->client->leads()->get($filter);
+            $leads = $client->leads()->get($filter);
 
             foreach ($leads as $lead) {
 
