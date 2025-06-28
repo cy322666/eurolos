@@ -68,6 +68,8 @@ class GetLeadCreate extends Command
             14126338,
             14126335,
             65767725,
+            142,
+            143,
     ];
 
     /**
