@@ -95,6 +95,8 @@ class GetLeadCreate extends Command
 
             } catch (AmoCRMApiNoContentException $e) {
 
+                Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+
                 continue;
             }
 
@@ -127,7 +129,7 @@ class GetLeadCreate extends Command
 
                 foreach ($leads as $lead) {
 
-                    dump($lead->getId());
+//                    dump($lead->getId());
 
                     Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
                 }

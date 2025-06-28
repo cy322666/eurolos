@@ -9,6 +9,7 @@ use App\Facades\amoCRM\amoCRM;
 use App\Models\Events\LeadCreate;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class GetUpdatedLeads extends Command
 {
@@ -55,6 +56,8 @@ class GetUpdatedLeads extends Command
 
             } catch (AmoCRMApiNoContentException $e) {
 
+                Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+
                 continue;
             }
 
@@ -98,7 +101,10 @@ class GetUpdatedLeads extends Command
                 );
             }
 
-        } catch (AmoCRMApiNoContentException $e) {}
+        } catch (AmoCRMApiNoContentException $e) {
+
+            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+        }
 
 
         $filter = (new LeadsFilter());
@@ -123,6 +129,9 @@ class GetUpdatedLeads extends Command
                 );
             }
 
-        } catch (AmoCRMApiNoContentException $e) {}
+        } catch (AmoCRMApiNoContentException $e) {
+
+            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+        }
     }
 }

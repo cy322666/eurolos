@@ -94,9 +94,9 @@ class GetLeads extends Command
 
                     Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage()]);
 
-                    Lead::query()
-                        ->where('lead_id', $leadId)
-                        ->delete();
+//                    Lead::query()
+//                        ->where('lead_id', $leadId)
+//                        ->delete();
 
                     continue;
                 }
