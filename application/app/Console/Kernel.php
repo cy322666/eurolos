@@ -18,38 +18,36 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:get-calls')->dailyAt('08:03');
 
         $schedule->command('app:get-lead-create')->dailyAt('05:00');
-        $schedule->command('app:get-leads')->dailyAt('06:00');
-        $schedule->command('app:get-updated-leads')->dailyAt('06:10');
-        $schedule->command('app:get-leads')->dailyAt('06:20');
+        $schedule->command('app:get-updated-leads')->dailyAt('06:00');
+        $schedule->command('app:get-leads')->dailyAt('06:10');
         $schedule->command('app:get-updated-leads')->dailyAt('06:30');
         $schedule->command('app:get-leads')->dailyAt('06:40');
-        $schedule->command('app:get-updated-leads')->dailyAt('06:50');
-        $schedule->command('app:get-leads')->dailyAt('07:00');
-        $schedule->command('app:get-updated-leads')->dailyAt('07:10');
-        $schedule->command('app:get-leads')->dailyAt('07:20');
-        $schedule->command('app:get-updated-leads')->dailyAt('07:30');
-        $schedule->command('app:get-leads')->dailyAt('07:40');
-        $schedule->command('app:get-updated-leads')->dailyAt('07:50');
-        $schedule->command('app:get-leads')->dailyAt('08:00');
-        $schedule->command('app:get-updated-leads')->dailyAt('08:10');
-        $schedule->command('app:get-calls')->dailyAt('08:20');
-        $schedule->command('app:get-updated-leads')->dailyAt('08:30');
+        $schedule->command('app:get-updated-leads')->dailyAt('07:00');
+        $schedule->command('app:get-leads')->dailyAt('07:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('07:20');
+        $schedule->command('app:get-leads')->dailyAt('07:30');
+        $schedule->command('app:get-updated-leads')->dailyAt('07:40');
+        $schedule->command('app:get-leads')->dailyAt('07:50');
+        $schedule->command('app:get-updated-leads')->dailyAt('08:00');
+        $schedule->command('app:get-leads')->dailyAt('08:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('08:20');
+        $schedule->command('app:get-calls')->dailyAt('08:30');
 
-        $schedule->command('app:get-updated-leads')->dailyAt('09:00');
-        $schedule->command('app:get-lead-create')->dailyAt('09:05');
+        $schedule->command('app:get-lead-create')->dailyAt('09:00');
         $schedule->command('app:get-leads')->dailyAt('09:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('09:20');
 
-        $schedule->command('app:get-updated-leads')->dailyAt('10:00');
-        $schedule->command('app:get-lead-create')->dailyAt('10:05');
+        $schedule->command('app:get-lead-create')->dailyAt('10:00');
         $schedule->command('app:get-leads')->dailyAt('10:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('10:20');
 
-        $schedule->command('app:get-updated-leads')->dailyAt('11:00');
-        $schedule->command('app:get-lead-create')->dailyAt('11:05');
+        $schedule->command('app:get-lead-create')->dailyAt('11:00');
         $schedule->command('app:get-leads')->dailyAt('11:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('11:20');
 
-        $schedule->command('app:get-updated-leads')->dailyAt('12:00');
-        $schedule->command('app:get-lead-create')->dailyAt('12:05');
+        $schedule->command('app:get-lead-create')->dailyAt('12:00');
         $schedule->command('app:get-leads')->dailyAt('12:10');
+        $schedule->command('app:get-updated-leads')->dailyAt('12:20');
 
         $schedule->command('app:get-calls')->dailyAt('12:10');
         $schedule->command('app:get-calls')->dailyAt('14:10');
