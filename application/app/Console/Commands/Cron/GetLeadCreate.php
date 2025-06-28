@@ -107,7 +107,7 @@ class GetLeadCreate extends Command
         }
 
         $rangeFilter = new BaseRangeFilter();
-        $rangeFilter->setFrom(Carbon::create(2025, 03, 01)->timestamp);
+        $rangeFilter->setFrom(Carbon::create(2025, 06, 01)->timestamp);
         $rangeFilter->setTo(Carbon::now()->timestamp);
 
         try {
