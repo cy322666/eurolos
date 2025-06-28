@@ -82,7 +82,7 @@ class GetUpdatedLeads extends Command
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(500);
-        $filter->setCreatedAt(Carbon::parse('2025-02-01')->timestamp);
+        $filter->setUpdatedAt(Carbon::now()->subDays(2)->timestamp);
 
         try {
 
@@ -110,7 +110,7 @@ class GetUpdatedLeads extends Command
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(500);
-        $filter->setClosedAt(Carbon::parse('2025-01-01')->timestamp);
+        $filter->setClosedAt(Carbon::now()->subDays(2)->timestamp);
 
         try {
 
