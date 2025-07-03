@@ -28,7 +28,7 @@ class GetLeads extends Command
      *
      * @var string
      */
-    protected $signature = 'app:get-leads';
+    protected $signature = 'app:get-leads {limit?}';
 
     private AmoCRMApiClient $client;
     /**
@@ -65,7 +65,7 @@ class GetLeads extends Command
             $leadIds = DB::table('leads')
                 ->orderBy('updated_at')
 //                ->offset($this->argument('count'))
-                ->limit(1000)
+                ->limit($this->argument('limit'))
                 ->get()
                 ->pluck('lead_id');
 //                ->sortBy('id');
@@ -90,6 +90,42 @@ class GetLeads extends Command
                 try {
                     $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
 
+                    $fields = [];
+
+                    $cFields = $lead->getCustomFieldsValues()->toArray();
+
+                    foreach ($cFields as $cField) {
+                        foreach (static::$fields as $fieldName => $fieldKey) {
+                            if ($cField['field_name'] == $fieldName) {
+
+                                if ($cField['field_type'] == 'date') {
+
+                                    $fields[$fieldKey] = $cField['values'][0]['value']
+                                        ->timezone('Europe/Moscow')
+                                        ->format('Y-m-d');
+
+                                } else
+                                    $fields[$fieldKey] = $cField['values'][0]['value'];
+                            }
+                        }
+                    }
+
+                    $createdAt = Carbon::parse($lead->getCreatedAt());
+
+                    $fields = array_merge($fields, [
+                        'lead_created_date' => $createdAt->format('Y-m-d'),
+                        'lead_created_time' => $createdAt->format('H:i:s'),
+                        'contact_id' => $lead->getContacts()?->first()?->id,
+                        'responsible_lead' => $lead->getResponsibleUserId(),
+                        'status_id' => $lead->getStatusId(),
+                        'pipeline_id' => $lead->getPipelineId(),
+//                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+
+                    Lead::query()
+                        ->where('lead_id', $lead->getId())
+                        ->update($fields);
+
                 } catch (AmoCRMApiNoContentException $e) {
 
                     Log::error(__METHOD__.' : '.$e->getLine(), [$e->getMessage()]);
@@ -100,42 +136,6 @@ class GetLeads extends Command
 
                     continue;
                 }
-
-                $fields = [];
-
-                $cFields = $lead->getCustomFieldsValues()->toArray();
-
-                foreach ($cFields as $cField) {
-                    foreach (static::$fields as $fieldName => $fieldKey) {
-                        if ($cField['field_name'] == $fieldName) {
-
-                            if ($cField['field_type'] == 'date') {
-
-                                $fields[$fieldKey] = $cField['values'][0]['value']
-                                    ->timezone('Europe/Moscow')
-                                    ->format('Y-m-d');
-
-                            } else
-                                $fields[$fieldKey] = $cField['values'][0]['value'];
-                        }
-                    }
-                }
-
-                $createdAt = Carbon::parse($lead->getCreatedAt());
-
-                $fields = array_merge($fields, [
-                    'lead_created_date' => $createdAt->format('Y-m-d'),
-                    'lead_created_time' => $createdAt->format('H:i:s'),
-                    'contact_id' => $lead->getContacts()?->first()?->id,
-                    'responsible_lead' => $lead->getResponsibleUserId(),
-                    'status_id' => $lead->getStatusId(),
-                    'pipeline_id' => $lead->getPipelineId(),
-//                    'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-
-                Lead::query()
-                    ->where('lead_id', $lead->getId())
-                    ->update($fields);
             }
 
         } catch (AmoCRMMissedTokenException|AmoCRMoAuthApiException|AmoCRMApiException $e) {

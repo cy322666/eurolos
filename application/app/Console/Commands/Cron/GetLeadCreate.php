@@ -81,7 +81,7 @@ class GetLeadCreate extends Command
 
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(500);
+        $filter->setLimit(250);
         $filter->setOrder('updated_at', 'desc');
 
         foreach (static::$statuses as $statusId) {
@@ -109,7 +109,7 @@ class GetLeadCreate extends Command
         }
 
         $rangeFilter = new BaseRangeFilter();
-        $rangeFilter->setFrom(Carbon::create(2025, 06, 01)->timestamp);
+        $rangeFilter->setFrom(Carbon::now()->subMonth()->timestamp);
         $rangeFilter->setTo(Carbon::now()->timestamp);
 
         try {
@@ -118,7 +118,7 @@ class GetLeadCreate extends Command
 
                 $filter = (new LeadsFilter());
                 $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-                $filter->setLimit(500);
+                $filter->setLimit(250);
                 $filter->setPage($page);
                 $filter->setClosedAt($rangeFilter);
 
@@ -130,8 +130,6 @@ class GetLeadCreate extends Command
                 }
 
                 foreach ($leads as $lead) {
-
-//                    dump($lead->getId());
 
                     Lead::query()->firstOrCreate(['lead_id' => $lead->getId()]);
                 }

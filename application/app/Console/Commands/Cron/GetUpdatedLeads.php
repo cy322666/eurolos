@@ -4,6 +4,7 @@ namespace App\Console\Commands\Cron;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMApiNoContentException;
+use AmoCRM\Filters\BaseRangeFilter;
 use AmoCRM\Filters\LeadsFilter;
 use App\Facades\amoCRM\amoCRM;
 use App\Models\Events\LeadCreate;
@@ -65,60 +66,15 @@ class GetUpdatedLeads extends Command
     {
         $this->client = amoCRM::long();
 
-        static::getLeads(1, $this->client);
-        static::getLeads(2, $this->client);
-        static::getLeads(3, $this->client);
-
         static::getLeadsUpdated(1, $this->client);
         static::getLeadsUpdated(2, $this->client);
         static::getLeadsUpdated(3, $this->client);
+        static::getLeadsUpdated(4, $this->client);
+        static::getLeadsUpdated(5, $this->client);
 
         static::getLeadsClosed(1, $this->client);
         static::getLeadsClosed(2, $this->client);
         static::getLeadsClosed(3, $this->client);
-    }
-
-    public static function getLeads(int $page, $client)
-    {
-        Log::debug(__METHOD__);
-
-        $filter = (new LeadsFilter());
-        $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
-        $filter->setLimit(250);
-        $filter->setOrder('updated_at', 'desc');
-        $filter->setPage($page);
-
-        foreach (static::$statuses as $statusId) {
-
-            $filter->setStatuses([[
-                'status_id'   => $statusId,
-                'pipeline_id' => GetLeadStatuses::MAIN_PIPELINE_ID,
-            ]]);
-
-            try {
-
-                $leads = $client->leads()->get($filter);
-
-            } catch (AmoCRMApiNoContentException $e) {
-
-                Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
-
-                continue;
-            }
-
-            foreach ($leads as $lead) {
-
-                LeadCreate::query()->firstOrCreate(
-                    ['entity_id' => $lead->getId()],
-                    [
-                        'event_id' => rand(1, 99999999999999999),
-                        'entity_id' => $lead->getId(),
-                        'event_created_by' => $lead->getCreatedBy(),
-                        'event_created_at' => Carbon::parse($lead->getCreatedAt())->format('Y-m-d H:i:s'),
-                    ]
-                );
-            }
-        }
     }
 
     public static function getLeadsUpdated(int $page, $client)
@@ -128,7 +84,12 @@ class GetUpdatedLeads extends Command
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(250);
-        $filter->setUpdatedAt(Carbon::now()->subDays(2)->timestamp);
+
+        $rangeFilter = new BaseRangeFilter;
+        $rangeFilter->setFrom(Carbon::now()->subDays(7)->timestamp);
+        $rangeFilter->setTo(Carbon::now()->timestamp);
+
+        $filter->setUpdatedAt($rangeFilter);
         $filter->setPage($page);
 
         try {
@@ -150,7 +111,7 @@ class GetUpdatedLeads extends Command
 
         } catch (AmoCRMApiNoContentException $e) {
 
-            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage(), $e->getLastRequestInfo());
         }
     }
 
@@ -161,7 +122,13 @@ class GetUpdatedLeads extends Command
         $filter = (new LeadsFilter());
         $filter->setPipelineIds(GetLeadStatuses::MAIN_PIPELINE_ID);
         $filter->setLimit(250);
-        $filter->setClosedAt(Carbon::now()->subDays(2)->timestamp);
+        $filter->setPage($page);
+
+        $rangeFilter = new BaseRangeFilter;
+        $rangeFilter->setFrom(Carbon::now()->subDays(7)->timestamp);
+        $rangeFilter->setTo(Carbon::now()->timestamp);
+
+        $filter->setClosedAt($rangeFilter);
 
         try {
 
@@ -182,7 +149,7 @@ class GetUpdatedLeads extends Command
 
         } catch (AmoCRMApiNoContentException $e) {
 
-            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage());
+            Log::error(__METHOD__ . ' ' . $e->getLine().' '.$e->getMessage(), $e->getLastRequestInfo());
         }
     }
 }
