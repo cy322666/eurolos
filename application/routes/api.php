@@ -19,5 +19,4 @@ Route::match(['get', 'post'], 'amocrm/redirect', [AuthController::class, 'redire
 
 Route::post('hook/talks', [HookController::class, 'talks']);
 
-
-//3) Количество состоявшихся замеров. Фильтрация по менеджерам и по назначенным замерщикам. также по источникам лидов
+Route::post('hook/leads', [HookController::class, 'leads']);
