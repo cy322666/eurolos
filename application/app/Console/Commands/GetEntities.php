@@ -82,7 +82,7 @@ class GetEntities extends Command
             foreach ($users as $user) {
 
                 if ($user->getRights()->getIsActive() !== true ||
-                    $user->getRights()->getGroupId()  !== null) continue;
+                    $user->getRights()->getGroupId()  !== 0) continue;
 
                 Staff::query()->updateOrCreate([
                     'staff_id' => $user->getId(),
