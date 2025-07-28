@@ -3,10 +3,11 @@ FROM ubuntu:20.04
 RUN apt-get update && apt-get install supervisor -y
 
 RUN apt install lsb-release ca-certificates apt-transport-https software-properties-common -y
-RUN add-apt-repository ppa:ondrej/php
 
-RUN apt update
-RUN apt install php8.1 -y
+RUN apt update && apt install -y software-properties-common
+RUN apt add-apt-repository ppa:ondrej/php \
+RUN apt update && apt install -y php8.1
+
 RUN apt install php8.1-pgsql -y \
     php8.1-gd \
     php8.1-fpm \
