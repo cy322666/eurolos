@@ -11,7 +11,7 @@ composer require laravel/octane --with-all-dependencies
 
 php artisan telescope:install
 
-php artisan horizon:install
+#php artisan horizon:install
 
 php artisan octane:install --server="swoole"
 
