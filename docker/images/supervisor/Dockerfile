@@ -7,9 +7,8 @@ RUN apt install lsb-release ca-certificates apt-transport-https software-propert
 RUN apt update
 RUN apt install -y software-properties-common
 RUN apt update
+RUN apt add-repository ppa:ansible/ansible
 RUN apt add-apt-repository ppa:ondrej/php
-RUN apt list -a ansible
-RUN apt install ansible
 RUN apt install -y php8.1
 
 RUN apt install php8.1-pgsql -y \
