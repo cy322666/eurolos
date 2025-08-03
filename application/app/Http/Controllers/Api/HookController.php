@@ -22,6 +22,6 @@ class HookController extends Controller
 
     public function leads(Request $request): void
     {
-        GetLead::dispatch($request->leads['update'][0]['id']);
+        GetLead::dispatch($request->toArray()['leads']['update'][0]['id']);
     }
 }

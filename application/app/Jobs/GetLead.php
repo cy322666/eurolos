@@ -6,6 +6,7 @@ use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Models\LeadModel;
 use App\Console\Commands\Cron\GetLeads;
+use App\Facades\amoCRM\amoCRM;
 use App\Models\Entities\Lead;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -24,19 +25,20 @@ class GetLead implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct($leadId)
     {
-        //
+        $this->leadId = $leadId;
+        $this->client = amoCRM::long();
     }
 
     /**
      * Execute the job.
      */
-    public function handle(int $leadId): void
+    public function handle(): void
     {
         try {
 
-            $lead = $this->client->leads()->getOne($leadId, [LeadModel::CONTACTS]);
+            $lead = $this->client->leads()->getOne($this->leadId, [LeadModel::CONTACTS]);
 
             $fields = [];
 
