@@ -22,7 +22,7 @@ class HookController extends Controller
 
     public function leads(Request $request): void
     {
-        $leadId = $request->toArray()['leads']['update'][0]['id'];
+        $leadId = (int)$request->all()['leads']['update'][0]['id'];
 
         GetLead::dispatch($leadId);
     }

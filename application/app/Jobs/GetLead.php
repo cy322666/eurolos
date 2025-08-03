@@ -21,6 +21,7 @@ class GetLead implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private AmoCRMApiClient $client;
+    private mixed $leadId;
 
     /**
      * Create a new job instance.
