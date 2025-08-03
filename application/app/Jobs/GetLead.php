@@ -20,8 +20,8 @@ class GetLead implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private AmoCRMApiClient $client;
-    private mixed $leadId;
+    public AmoCRMApiClient $client;
+    public mixed $leadId;
 
     /**
      * Create a new job instance.
@@ -38,7 +38,6 @@ class GetLead implements ShouldQueue
     public function handle(): void
     {
         try {
-
             $lead = $this->client->leads()->getOne($this->leadId, [LeadModel::CONTACTS]);
 
             $fields = [];
