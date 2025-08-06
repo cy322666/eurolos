@@ -39,9 +39,20 @@ class GetLead extends Command
 
             $lead = $this->client->leads()->getOne($this->argument('lead_id'), [LeadModel::CONTACTS]);
 
+            if (!$lead) {
+
+                return false;
+            }
             $fields = [];
 
-            $cFields = $lead->getCustomFieldsValues()->toArray();
+            $cFields = $lead->getCustomFieldsValues();
+
+            if ($cFields) {
+
+                $cFields = $cFields->toArray();
+            } else {
+                return false;
+            }
 
             foreach ($cFields as $cField) {
                 foreach (GetLeads::$fields as $fieldName => $fieldKey) {
